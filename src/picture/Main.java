@@ -2,17 +2,14 @@ package picture;
 
 
 public class Main {
-		
-	private static String command, outputlocation;
-	private static char flipdirection;
-	private static Picture inputpic;
-	private static int rotation;
 	
     public static void main(String[] args) {
     	String command, outputlocation;
+    	char flipdirection;
     	Picture inputpic;
     	Picture[] inputpics;
     	int rotation;
+    	
     	command = args[0];
     	System.out.println("command: " + command);
     	if (command.equals("invert")) {
@@ -104,7 +101,6 @@ public class Main {
     	int xposition, yposition;
     	height = image.getHeight();
     	width = image.getWidth();
-    	System.out.printf("HEIGHT: %s, WIDTH: %s\n", height, width);
     	midheight = height / 2;
     	midwidth = width / 2;
     	
@@ -118,19 +114,19 @@ public class Main {
     	}
     	
 
-    	for(int x=1; x < width; x++) {
-    		for(int y=1; y < height; y++) {
+    	for(int x=0; x < width; x++) {
+    		for(int y=0; y < height; y++) {
     			pixel = image.getPixel(x, y);
     			
     			if (rotation == 90) {
-    				xposition = midwidth + (midheight - y);
+    				xposition = midwidth + (midheight - y) - 1;
     				yposition = midheight + (x - midwidth);
     			} else if (rotation == 180) {
-    				xposition = width - x;
-    				yposition = height - y;
+    				xposition = width - x - 1;
+    				yposition = height - y - 1;
     			} else {
     				xposition = midwidth - (midheight - y);
-    				yposition = midheight - (x - midwidth);    				
+    				yposition = midheight - (x - midwidth) - 1;    				
     			}
     			rotatedimage.setPixel(xposition, yposition, pixel);
     		}
@@ -154,17 +150,17 @@ public class Main {
     	
     	flippedimage = Utils.createPicture(width, height);
     	
-    	for(int x=1; x < width; x++) {
-    		for(int y=1; y < height; y++) {
+    	for(int x=0; x < width; x++) {
+    		for(int y=0; y < height; y++) {
     			pixel = image.getPixel(x, y);
+    			
     			if (direction == 'H' || direction == 'h') {
-    				xposition = width - x;
+    				xposition = width - x - 1;
     				yposition = y;
     			} else {
     				xposition = x;
-    				yposition = height - y;
+    				yposition = height - y - 1;
     			}
-    			
     			flippedimage.setPixel(xposition, yposition, pixel);
     			
     		}
@@ -217,22 +213,27 @@ public class Main {
     	width = image.getWidth();
     	
     	blurredimage = Utils.createPicture(width, height);
-    	for(int x=1; x < width-1; x++) {
-    		for(int y=1; y < height-1; y++) {
-    			pixels = new Color[]{
-    					image.getPixel(x-1, y-1),
-    					image.getPixel(x, y-1),
-    					image.getPixel(x, y+1),
-    					image.getPixel(x-1, y),
-    					image.getPixel(x+1, y),
-    					image.getPixel(x-1, y+1),
-    					image.getPixel(x, y+1),
-    					image.getPixel(x+1, y+1)
-    					};
-    					
-    					blurredimage.setPixel(x, y, averagePixels(pixels));
+    	for(int x=0; x < width; x++) {
+    		for(int y=0; y < height; y++) {
+    			
+    			if (!(0 < x && x < (width - 1) && 0 < y && y < (height - 1))) {
+    				blurredimage.setPixel(x, y, image.getPixel(x, y));
+    			} else {
+	    			pixels = new Color[]{
+	    					image.getPixel(x-1, y-1),
+	    					image.getPixel(x, y-1),
+	    					image.getPixel(x+1, y-1),
+	    					image.getPixel(x-1, y),
+	    					image.getPixel(x, y),
+	    					image.getPixel(x+1, y),
+	    					image.getPixel(x-1, y+1),
+	    					image.getPixel(x, y+1),
+	    					image.getPixel(x+1, y+1)
+	    					};
+	    					
+	    					blurredimage.setPixel(x, y, averagePixels(pixels));
+	    			}
     			}
-    					
     		}
     	
     	return blurredimage;
